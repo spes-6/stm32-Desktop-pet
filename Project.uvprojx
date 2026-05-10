@@ -700,6 +700,16 @@
               <FilePath>.\Hardware\my_gpio.h</FilePath>
             </File>
             <File>
+              <FileName>dht11.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\dht11.c</FilePath>
+            </File>
+            <File>
+              <FileName>dht11.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\dht11.h</FilePath>
+            </File>
+            <File>
               <FileName>my_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Hardware\my_usart.c</FilePath>
@@ -710,14 +720,24 @@
               <FilePath>.\Hardware\my_usart.h</FilePath>
             </File>
             <File>
-              <FileName>dht11.c</FileName>
+              <FileName>OLED.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Hardware\dht11.c</FilePath>
+              <FilePath>.\Hardware\OLED.c</FilePath>
             </File>
             <File>
-              <FileName>dht11.h</FileName>
+              <FileName>OLED.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Hardware\dht11.h</FilePath>
+              <FilePath>.\Hardware\OLED.h</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_Data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED_Data.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_Data.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED_Data.h</FilePath>
             </File>
           </Files>
         </Group>

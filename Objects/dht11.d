@@ -29,5 +29,4 @@
 .\objects\dht11.o: .\Library\inc\stm32f10x_usart.h
 .\objects\dht11.o: .\Library\inc\stm32f10x_wwdg.h
 .\objects\dht11.o: .\Library\inc\misc.h
-.\objects\dht11.o: Hardware\my_gpio.h
 .\objects\dht11.o: Hardware\delay.h

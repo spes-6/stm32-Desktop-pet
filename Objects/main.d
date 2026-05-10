@@ -29,6 +29,6 @@
 .\objects\main.o: .\Library\inc\stm32f10x_wwdg.h
 .\objects\main.o: .\Library\inc\misc.h
 .\objects\main.o: .\Hardware\delay.h
-.\objects\main.o: .\Hardware\my_gpio.h
+.\objects\main.o: .\Hardware\dht11.h
 .\objects\main.o: .\Hardware\my_usart.h
 .\objects\main.o: E:\download\keil5\core\ARM\ARMCC\Bin\..\include\stdio.h
