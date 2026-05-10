@@ -1069,7 +1069,7 @@ Removing Unused input sections from the image.
     Removing oled.o(i.OLED_ShowImage), (252 bytes).
     Removing oled.o(i.OLED_ShowNum), (76 bytes).
     Removing oled.o(i.OLED_ShowSignedNum), (112 bytes).
-    Removing oled.o(i.OLED_ShowString), (272 bytes).
+    Removing oled.o(i.OLED_ShowString), (452 bytes).
     Removing oled.o(i.OLED_Update), (40 bytes).
     Removing oled.o(i.OLED_UpdateArea), (124 bytes).
     Removing oled.o(i.OLED_W_SCL), (36 bytes).
@@ -1078,7 +1078,7 @@ Removing Unused input sections from the image.
     Removing oled.o(i.OLED_WriteData), (46 bytes).
     Removing oled.o(i.OLED_pnpoly), (140 bytes).
     Removing oled.o(.bss), (1024 bytes).
-    Removing oled_data.o(.constdata), (2367 bytes).
+    Removing oled_data.o(.constdata), (2381 bytes).
     Removing fadd.o(.text), (176 bytes).
     Removing dadd.o(.text), (334 bytes).
     Removing dmul.o(.text), (228 bytes).
@@ -1098,7 +1098,7 @@ Removing Unused input sections from the image.
     Removing dfixul.o(.text), (48 bytes).
     Removing dscalb.o(.text), (46 bytes).
 
-529 unused section(s) (total 29691 bytes) removed from the image.
+529 unused section(s) (total 29885 bytes) removed from the image.
 
 ==============================================================================
 
