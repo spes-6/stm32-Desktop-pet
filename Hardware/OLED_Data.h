@@ -32,6 +32,22 @@ extern const ChineseCell_t OLED_CF16x16[];
 
 /*图像数据声明*/
 extern const uint8_t Diode[];
+extern unsigned char BMP0[];   // 初始待机表情
+extern unsigned char BMP1[];   // 晕眩表情
+extern unsigned char BMP2[];   // 超级喜爱表情
+extern unsigned char BMP3[];   // OVER表情
+extern unsigned char BMP4[];   // 一点喜爱表情
+extern unsigned char BMP5[];   // 喜爱表情
+extern unsigned char BMP6[];   // 挑眉/眨眼表情
+extern unsigned char BMP7[];   // 恼羞成怒表情
+extern unsigned char BMP8[];   // 一级烦躁表情
+extern unsigned char BMP9[];   // 二级烦躁表情
+extern unsigned char BMP10[];  // 三级烦躁表情
+extern unsigned char BMP11[];  // 四级烦躁表情
+extern unsigned char BMP12[];  // 睡觉表情
+extern unsigned char BMP13[];  // 游戏胜利画面
+extern unsigned char BMP14[];  // 游戏进行画面
+extern unsigned char BMP15[];  // 摇杆遥控界面
 /*按照上面的格式，在这个位置加入新的图像数据声明*/
 //...
 

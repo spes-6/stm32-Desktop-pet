@@ -24,9 +24,9 @@
 
 // 方案1：PB8/PB9（当前使用）
 #define OLED_SCL_PORT      GPIOB
-#define OLED_SCL_PIN       GPIO_Pin_8
+#define OLED_SCL_PIN       GPIO_Pin_0
 #define OLED_SDA_PORT      GPIOB
-#define OLED_SDA_PIN       GPIO_Pin_9
+#define OLED_SDA_PIN       GPIO_Pin_1
 #define OLED_GPIO_CLK      RCC_APB2Periph_GPIOB
 
 // 方案2：PB6/PB7（I2C1 默认引脚，取消注释即可使用）

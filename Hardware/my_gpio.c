@@ -39,3 +39,17 @@ void My_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, MyGPIOState state)
 uint8_t My_GPIO_ReadPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin) {
     return GPIO_ReadInputDataBit(GPIOx, GPIO_Pin);
 }
+//oled屏幕相关的初始化---------------------------------------------------------------------------------------
+void I2C_GPIO_Init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStruct;
+    
+    /* 1. 使能GPIOB时钟 */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    
+    /* 2. 配置PB0(SCL)和PB1(SDA)为复用开漏输出 */
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_OD;   // 复用开漏（I2C必须）
+    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOB, &GPIO_InitStruct);
+}

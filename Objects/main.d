@@ -32,3 +32,6 @@
 .\objects\main.o: .\Hardware\dht11.h
 .\objects\main.o: .\Hardware\my_usart.h
 .\objects\main.o: E:\download\keil5\core\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\main.o: .\Hardware\OLED_Data.h
+.\objects\main.o: .\Hardware\OLED.h
+.\objects\main.o: .\Hardware\my_gpio.h
