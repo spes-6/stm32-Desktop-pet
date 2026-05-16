@@ -5,11 +5,13 @@
 #include "OLED_Data.h"
 #include "OLED.h"
 #include "my_gpio.h"
-
+#include "Timer.h"
+#include "Key.h"
 //----------------------------------全局变量定义-------------------------------------------------------------------------
 int feel_left=0,feel_right=0,anger=0;//灭灯为1,anger为怒气值
 int turn_left_A,turn_right_A;//暂停使用标志位
-int mood=12,clear=0;//表示心情  清屏
+int mood=0,clear=0;//表示心情  清屏
+extern uint8_t Key_Num;
  //uint16_t light_show=50;  // 光照值（0-100）
 //----------------------------------end-------------------------------------------------------------------------
 
@@ -42,7 +44,7 @@ void data_show(void)
     else
     {
         // 读取失败时显示错误
-        OLED_ShowString(0, 0, "DHT11 Error!", OLED_8X16);
+        OLED_ShowString(0, 45, "DHT11 Error!", OLED_8X16);
     }
     OLED_Update();  // 最后更新显示
 }
@@ -144,26 +146,65 @@ void face(){       //表情控制       1模式
 			data_show();
 		}
 		//OLED_Refresh();
+	OLED_Update();
+
 }
 
 // 修改后的 data_show() 函数
 
+
+
+void LED_Init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_SetBits(GPIOA, GPIO_Pin_1);  // 初始熄灭
+}
 int main(void)
 {
+	LED_Init();  
 	Delay_Init();
 	I2C_GPIO_Init();
   OLED_Init();
 	DHT11_Init();
 	OLED_Clear();
+	Timer_Init();
 
 	
     
     while(1)
     {
-        face();          // 显示温湿度
-        delay_ms(2000);
-			OLED_Clear();
+        face();
+			OLED_Update();
+			if(Key_GetNum()==1){
+				mood=12;
+			}
     }
+	  
+    
+   
 }
 
+
+void TIM2_IRQHandler(void)
+{
+	if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)
+	{
+		static uint16_t cnt = 0;
+        cnt++;
+        if(cnt >= 500)  // 每 500ms 翻转一次
+        {
+					
+            cnt = 0;
+            // 假设 PA1 接了 LED
+            GPIO_WriteBit(GPIOA, GPIO_Pin_1, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_1)));
+        }
+		Key_Tick();
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+	}
+}
 

@@ -35,3 +35,5 @@
 .\objects\main.o: .\Hardware\OLED_Data.h
 .\objects\main.o: .\Hardware\OLED.h
 .\objects\main.o: .\Hardware\my_gpio.h
+.\objects\main.o: .\Hardware\Timer.h
+.\objects\main.o: .\Hardware\Key.h
