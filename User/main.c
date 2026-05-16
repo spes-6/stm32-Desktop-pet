@@ -9,8 +9,43 @@
 //----------------------------------全局变量定义-------------------------------------------------------------------------
 int feel_left=0,feel_right=0,anger=0;//灭灯为1,anger为怒气值
 int turn_left_A,turn_right_A;//暂停使用标志位
-int mood=7,clear=0;//表示心情  清屏
+int mood=12,clear=0;//表示心情  清屏
+ //uint16_t light_show=50;  // 光照值（0-100）
 //----------------------------------end-------------------------------------------------------------------------
+
+
+//-----------------------------------------------MODE 1----------------------------------------------------------------------------
+void data_show(void)
+{
+    uint8_t temperature = 0;
+    uint8_t humidity = 0;
+    char display_str[20];  // 临时字符串缓冲区
+    
+    // 1. 读取DHT11数据
+    if(DHT11_Read_Data(&temperature, &humidity) == 0)  // 返回0表示成功
+    {
+        // 2. 显示温度（使用英文字符串代替中文）
+        OLED_ShowString(0, 0, "Temp:", OLED_8X16);
+        OLED_ShowNum(60, 0, temperature - 4, 2, OLED_8X16);
+        OLED_ShowString(85, 0, "C", OLED_8X16);
+        
+        // 3. 显示湿度
+        OLED_ShowString(0, 22, "Humi:", OLED_8X16);
+        OLED_ShowNum(60, 22, humidity, 2, OLED_8X16);
+        OLED_ShowString(85, 22, "%", OLED_8X16);
+        
+//        // 4. 显示光照
+//        OLED_ShowString(0, 45, "Light:", OLED_8X16);
+//        OLED_ShowNum(60, 45, 100 - light_show, 2, OLED_8X16);
+//        OLED_ShowString(85, 45, "%", OLED_8X16);
+    }
+    else
+    {
+        // 读取失败时显示错误
+        OLED_ShowString(0, 0, "DHT11 Error!", OLED_8X16);
+    }
+    OLED_Update();  // 最后更新显示
+}
 
 void face(){       //表情控制       1模式
 	  if(mood==0){   //超级喜爱
@@ -95,34 +130,39 @@ void face(){       //表情控制       1模式
 		OLED_Clear();	
 		}
 		clear=11;
-		OLED_ShowImage(0,0,128,64,BMP1);
+		OLED_ShowImage(0,0,128,64,BMP1);}
 //		if(dizzy_time>=30){
 //		  mood=2;
 //			dizzy_time=0;
 //		}
 //		}
-//		else if(mood==12){   //环境检测
-//		  if(clear!=12){
-//			OLED_Clear();	
-//			}
-//			clear=12;
-//			data_show();
-//		}
-//		OLED_Refresh();
-}}
+		else if(mood==12){   //环境检测
+		  if(clear!=12){
+			OLED_Clear();	
+			}
+			clear=12;
+			data_show();
+		}
+		//OLED_Refresh();
+}
+
+// 修改后的 data_show() 函数
+
 int main(void)
 {
+	Delay_Init();
 	I2C_GPIO_Init();
   OLED_Init();
+	DHT11_Init();
 	OLED_Clear();
-	OLED_ShowImage(0,0,128,64,BMP11);
-	OLED_Update();
-	delay_s(5);
-	face();
-	OLED_Update();
+
+	
+    
     while(1)
     {
-        
+        face();          // 显示温湿度
+        delay_ms(2000);
+			OLED_Clear();
     }
 }
 
