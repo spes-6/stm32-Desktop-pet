@@ -36,7 +36,7 @@ I (.\Library\inc\stm32f10x_usart.h)(0x6A06FBCC)
 I (.\Library\inc\stm32f10x_wwdg.h)(0x6A06FBCC)
 I (.\Library\inc\misc.h)(0x6A06FBCC)
 F (.\Start\system_stm32f10x.h)(0x6A06FBCC)()
-F (.\User\main.c)(0x6A0869CB)(--gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Library\inc -I .\Library\src -I .\Hardware --no-multibyte-chars-IE:\download\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\User\main.c)(0x6A0B07AA)(--gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Library\inc -I .\Library\src -I .\Hardware --no-multibyte-chars-IE:\download\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (.\Start\stm32f10x.h)(0x6A06FBCC)
 I (.\Start\core_cm3.h)(0x6A06FBCC)
 I (E:\download\keil5\core\ARM\ARMCC\include\stdint.h)(0x6025237E)
@@ -72,7 +72,7 @@ I (E:\download\keil5\core\ARM\ARMCC\include\stdio.h)(0x60252374)
 I (.\Hardware\OLED_Data.h)(0x6A07F7B3)
 I (.\Hardware\OLED.h)(0x6A07FFE6)
 I (.\Hardware\my_gpio.h)(0x6A0703AC)
-I (.\Hardware\Timer.h)(0x61F11D95)
+I (.\Hardware\Timer.h)(0x6A0B0651)
 I (.\Hardware\Key.h)(0x6A08549F)
 F (.\User\stm32f10x_conf.h)(0x6A06FBCC)()
 F (.\User\stm32f10x_it.c)(0x6A06FBCC)(--gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Library\inc -I .\Library\src -I .\Hardware --no-multibyte-chars-IE:\download\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f10x_it.o --omf_browse .\objects\stm32f10x_it.crf --depend .\objects\stm32f10x_it.d)
@@ -890,7 +890,7 @@ I (.\Library\inc\stm32f10x_wwdg.h)(0x6A06FBCC)
 I (.\Library\inc\misc.h)(0x6A06FBCC)
 I (Hardware\delay.h)(0x6A06FBCC)
 F (.\Hardware\dht11.h)(0x6A080178)()
-F (.\Hardware\my_usart.c)(0x6A06FBCC)(--gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Library\inc -I .\Library\src -I .\Hardware --no-multibyte-chars-IE:\download\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\my_usart.o --omf_browse .\objects\my_usart.crf --depend .\objects\my_usart.d)
+F (.\Hardware\my_usart.c)(0x6A0B0651)(--gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Library\inc -I .\Library\src -I .\Hardware --no-multibyte-chars-IE:\download\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\my_usart.o --omf_browse .\objects\my_usart.crf --depend .\objects\my_usart.d)
 I (Hardware\my_usart.h)(0x6A06FBCC)
 I (.\Start\stm32f10x.h)(0x6A06FBCC)
 I (.\Start\core_cm3.h)(0x6A06FBCC)
@@ -962,7 +962,7 @@ F (.\Hardware\OLED_Data.c)(0x6A07FB01)(--gnu -c --cpu Cortex-M3 -D__MICROLIB -g 
 I (Hardware\OLED_Data.h)(0x6A07F7B3)
 I (E:\download\keil5\core\ARM\ARMCC\include\stdint.h)(0x6025237E)
 F (.\Hardware\OLED_Data.h)(0x6A07F7B3)()
-F (.\Hardware\Timer.c)(0x671CA62F)(--gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Library\inc -I .\Library\src -I .\Hardware --no-multibyte-chars-IE:\download\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\timer.o --omf_browse .\objects\timer.crf --depend .\objects\timer.d)
+F (.\Hardware\Timer.c)(0x6A0B0651)(--gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Library\inc -I .\Library\src -I .\Hardware --no-multibyte-chars-IE:\download\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\timer.o --omf_browse .\objects\timer.crf --depend .\objects\timer.d)
 I (.\Start\stm32f10x.h)(0x6A06FBCC)
 I (.\Start\core_cm3.h)(0x6A06FBCC)
 I (E:\download\keil5\core\ARM\ARMCC\include\stdint.h)(0x6025237E)
@@ -991,7 +991,7 @@ I (.\Library\inc\stm32f10x_tim.h)(0x6A06FBCC)
 I (.\Library\inc\stm32f10x_usart.h)(0x6A06FBCC)
 I (.\Library\inc\stm32f10x_wwdg.h)(0x6A06FBCC)
 I (.\Library\inc\misc.h)(0x6A06FBCC)
-F (.\Hardware\Timer.h)(0x61F11D95)()
+F (.\Hardware\Timer.h)(0x6A0B0651)()
 F (.\Hardware\Key.c)(0x6A085739)(--gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Library\inc -I .\Library\src -I .\Hardware --no-multibyte-chars-IE:\download\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\key.o --omf_browse .\objects\key.crf --depend .\objects\key.d)
 I (.\Start\stm32f10x.h)(0x6A06FBCC)
 I (.\Start\core_cm3.h)(0x6A06FBCC)

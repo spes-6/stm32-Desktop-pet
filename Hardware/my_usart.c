@@ -1,5 +1,7 @@
 #include "my_usart.h"
-
+volatile uint8_t bluetooth_data = 0;
+extern int  mood,clear;
+extern int left_x,left_y,right_x,right_y;
 // 串口1初始化函数 (TX: PA9, RX: PA10)
 void USART1_Init(uint32_t baudrate) 
 {
@@ -31,15 +33,55 @@ void USART1_Init(uint32_t baudrate)
 
     USART_Cmd(USART1, ENABLE);
 }
+//  -------------------------------开启中断
+void USART1_EnableRxInterrupt(void)
+{
+    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+    
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;//  中断优先级
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_Init(&NVIC_InitStructure);
+}
 
-// 发送一个字节（阻塞等待）
+//-----------------------------usart1中断
+void USART1_IRQHandler(void)
+{
+	if(USART_GetITStatus(USART1,USART_IT_RXNE)==SET){
+		bluetooth_data=USART_ReceiveData(USART1);
+		switch(bluetooth_data)
+        {
+            case 'M': mood = 12; clear = -1; break;
+            case 'R': if(mood > 0 && mood != 12) mood--; clear = -1; break;
+            // 摇杆指令
+            case 'A': left_x = 0; break;
+            case 'B': left_x = 1; break;
+            case 'C': left_x = 2; break;
+            case 'D': left_y = 0; break;
+            case 'E': left_y = 1; break;
+            case 'F': left_y = 2; break;
+            case 'G': right_x = 0; break;
+            case 'H': right_x = 1; break;
+            case 'I': right_x = 2; break;
+            case 'J': right_y = 0; break;
+            case 'K': right_y = 1; break;
+            case 'L': right_y = 2; break;
+        }
+        
+        USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+	}
+
+}
+// -------------------------发送一个字节（阻塞等待）
 void USART1_SendByte(uint8_t data)
 {
     while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
     USART_SendData(USART1, data);
 }
 
-// 发送字符串
+//--------------------------- 发送字符串
 void USART1_SendString(char *str)
 {
     while (*str)
@@ -48,7 +90,7 @@ void USART1_SendString(char *str)
     }
 }
 
-// 发送指定长度的数据
+// --------------------------发送指定长度的数据
 void USART1_SendData(uint8_t *data, uint16_t len)
 {
     uint16_t i;
@@ -58,14 +100,14 @@ void USART1_SendData(uint8_t *data, uint16_t len)
     }
 }
 
-// 接收一个字节（阻塞等待）
+// -------------------------接收一个字节（阻塞等待）
 uint8_t USART1_ReceiveByte(void)
 {
     while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
     return (uint8_t)USART_ReceiveData(USART1);
 }
 
-// 检查是否有数据可读
+// -----------------------检查是否有数据可读
 uint8_t USART1_IsDataAvailable(void)
 {
     return (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET);

@@ -7,16 +7,28 @@
 #include "my_gpio.h"
 #include "Timer.h"
 #include "Key.h"
+#include "my_usart.h"
 //----------------------------------全局变量定义-------------------------------------------------------------------------
 int feel_left=0,feel_right=0,anger=0;//灭灯为1,anger为怒气值
 int turn_left_A,turn_right_A;//暂停使用标志位
 int mood=0,clear=0;//表示心情  清屏
 extern uint8_t Key_Num;
+int left_x=0,left_y=0,right_x=0,right_y=0;
  //uint16_t light_show=50;  // 光照值（0-100）
 //----------------------------------end-------------------------------------------------------------------------
 
 
 //-----------------------------------------------MODE 1----------------------------------------------------------------------------
+void body(uint16_t base, uint16_t head)
+{
+	if(base>=2500){base=2500;}
+	else if(base<=500){base=500;}
+	if(head>=2500){head=2500;}
+	else if(head<1200){head=1200;}
+	 TIM_SetCompare1(TIM3, base);//底部   2500-500 
+   TIM_SetCompare2(TIM3, head);//上部   2500-1200 2500-低头 1200-最顶 1500-超级仰头  1900-正常对人  2250--平视
+}
+
 void data_show(void)
 {
     uint8_t temperature = 0;
@@ -173,16 +185,16 @@ int main(void)
 	DHT11_Init();
 	OLED_Clear();
 	Timer_Init();
+	TIM3_PWM_Init();
 
 	
     
     while(1)
     {
-        face();
-			OLED_Update();
-			if(Key_GetNum()==1){
-				mood=12;
-			}
+       body(1000,0);
+			delay_ms(500);
+			body(1500,0);
+			delay_ms(500);
     }
 	  
     
