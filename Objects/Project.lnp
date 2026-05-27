@@ -31,10 +31,11 @@
 ".\objects\my_gpio.o"
 ".\objects\dht11.o"
 ".\objects\my_usart.o"
-".\objects\oled.o"
-".\objects\oled_data.o"
 ".\objects\timer.o"
 ".\objects\key.o"
+".\objects\adc.o"
+".\objects\oled.o"
+".\objects\oled_data.o"
 --library_type=microlib --strict --scatter ".\Objects\Project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

@@ -1,34 +1,39 @@
 #include "stm32f10x.h"                  // Device header
 
-void Timer_Init(void)
+void TIM4_Init(void)
 {
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-	
-	TIM_InternalClockConfig(TIM2);
-	
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
-	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInitStructure.TIM_Period = 1000 - 1;
-	TIM_TimeBaseInitStructure.TIM_Prescaler = 72 - 1;
-	TIM_TimeBaseInitStructure.TIM_RepetitionCounter = 0;
-	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStructure);
-	
-	TIM_ClearFlag(TIM2, TIM_FLAG_Update);
-	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
-	
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-	
-	NVIC_InitTypeDef NVIC_InitStructure;
-	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-	NVIC_Init(&NVIC_InitStructure);
-	
-	TIM_Cmd(TIM2, ENABLE);
+    // 1. 使能 TIM4 时钟（TIM4 在 APB1 总线上）
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+    
+    // 2. 使用内部时钟（可选，默认就是内部）
+    TIM_InternalClockConfig(TIM4);
+    
+    // 3. 配置时基
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+    TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
+    TIM_TimeBaseInitStructure.TIM_Period = 1000 - 1;      // 自动重装值
+    TIM_TimeBaseInitStructure.TIM_Prescaler = 72 - 1;     // 预分频器
+    TIM_TimeBaseInitStructure.TIM_RepetitionCounter = 0;  // 高级定时器才用，TIM4 忽略
+    TIM_TimeBaseInit(TIM4, &TIM_TimeBaseInitStructure);
+    
+    // 4. 清除中断标志，使能更新中断
+    TIM_ClearFlag(TIM4, TIM_FLAG_Update);
+    TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+    
+    // 5. 配置 NVIC 中断优先级
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;       // 改为 TIM4_IRQn
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_Init(&NVIC_InitStructure);
+    
+    // 6. 使能 TIM4
+    TIM_Cmd(TIM4, ENABLE);
 }
-
 //-----------------TIM3----------------------
 //TIM3初始化  PA6是底部 PA7头部
 void TIM3_PWM_Init(void){

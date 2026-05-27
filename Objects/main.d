@@ -37,3 +37,4 @@
 .\objects\main.o: .\Hardware\my_gpio.h
 .\objects\main.o: .\Hardware\Timer.h
 .\objects\main.o: .\Hardware\Key.h
+.\objects\main.o: .\Hardware\adc.h

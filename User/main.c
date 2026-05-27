@@ -8,17 +8,64 @@
 #include "Timer.h"
 #include "Key.h"
 #include "my_usart.h"
+#include "adc.h"
 //----------------------------------全局变量定义-------------------------------------------------------------------------
 int feel_left=0,feel_right=0,anger=0;//灭灯为1,anger为怒气值
 int turn_left_A,turn_right_A;//暂停使用标志位
 int mood=0,clear=0;//表示心情  清屏
 extern uint8_t Key_Num;
-int left_x=0,left_y=0,right_x=0,right_y=0;
+int left_x=0,left_y=0,right_x=0,right_y=0;//遥感方位
+int left_x1=0,left_y1=0,right_x1=0,right_y1=0,left_x2=0,left_y2=0,right_x2=0,right_y2=0;//摇杆异常处理
+int mode=1,control_base=1500,control_head=1900,control_time=0;//模式  1-互动 2-游戏 3-手柄控制  4-自由模式
+static uint16_t stuck_time = 0;//遥感使用时长
+static uint8_t last_left_x = 0, last_left_y = 0;
+static uint8_t last_right_x = 0, last_right_y = 0;
+
  //uint16_t light_show=50;  // 光照值（0-100）
+ 
 //----------------------------------end-------------------------------------------------------------------------
+//--------------------------遥感参数初始
+void zero_control() {
+    // 原有计数器清零
+    left_x1 = 0; left_y1 = 0; right_x1 = 0; right_y1 = 0;
+    left_x2 = 0; left_y2 = 0; right_x2 = 0; right_y2 = 0;
+    
+    // 异常检测计时器清零
+    stuck_time = 0;
+    
+    // 状态记录清零（可选）
+    last_left_x = 0; last_left_y = 0;
+    last_right_x = 0; last_right_y = 0;
+}
+
+//---------------------------遥感异常
 
 
-//-----------------------------------------------MODE 1----------------------------------------------------------------------------
+void abnormal_deal() {
+    // 检查是否有摇杆不在中位，且和上一帧相同
+    if((left_x != 0 && left_x == last_left_x) ||
+       (left_y != 0 && left_y == last_left_y) ||
+       (right_x != 0 && right_x == last_right_x) ||
+       (right_y != 0 && right_y == last_right_y)) {
+        stuck_time++;
+    } 
+    else {
+        stuck_time = 0;  // 任何变化都清零
+    }
+    
+    // 记录当前状态
+    last_left_x = left_x;
+    last_left_y = left_y;
+    last_right_x = right_x;
+    last_right_y = right_y;
+    
+    // 60秒无变化
+    if(stuck_time >= 600) {
+        mode = 1;
+			stuck_time = 0;
+    }
+}
+//-----------------------------------------------MODE 1---------------------------------------------------------------------------
 void body(uint16_t base, uint16_t head)
 {
 	if(base>=2500){base=2500;}
@@ -184,8 +231,9 @@ int main(void)
   OLED_Init();
 	DHT11_Init();
 	OLED_Clear();
-	Timer_Init();
+	TIM4_Init();
 	TIM3_PWM_Init();
+	My_ADC_Init();// 采光
 
 	
     
@@ -202,21 +250,18 @@ int main(void)
 }
 
 
-void TIM2_IRQHandler(void)
+void TIM4_IRQHandler(void)
 {
-	if (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)
+	if (TIM_GetITStatus(TIM4, TIM_IT_Update) == SET)
 	{
-		static uint16_t cnt = 0;
-        cnt++;
-        if(cnt >= 500)  // 每 500ms 翻转一次
-        {
-					
-            cnt = 0;
-            // 假设 PA1 接了 LED
-            GPIO_WriteBit(GPIOA, GPIO_Pin_1, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_1)));
-        }
+		
 		Key_Tick();
-		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+		ADC1_Tick();
+		
+		if(mode == 3) {
+            abnormal_deal();
+        }
+		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 	}
 }
 
