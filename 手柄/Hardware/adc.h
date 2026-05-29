@@ -11,4 +11,5 @@ uint16_t My_ADC_GetValue(void);
 uint16_t My_ADC_GetLight(void);      
 void ADC1_Tick(void);
 uint16_t ADC_GetLight(void);
+void ADC_data(void);
 #endif /* __ADC_H */

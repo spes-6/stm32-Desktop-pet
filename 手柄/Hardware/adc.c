@@ -78,6 +78,8 @@ void My_ADC_Init(void)
 }
 
 
+
+//-------------Êý¾Ý×ª»»-------------------
 void ADC_data(void)
 {
     if(ADC_Values[0] <= 1000)      left_x = 1;
