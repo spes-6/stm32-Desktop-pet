@@ -27,5 +27,6 @@ void USART1_SendString(char *str);      // 发送字符串
 void USART1_SendData(uint8_t *data, uint16_t len); // 发送指定长度数据
 uint8_t USART1_ReceiveByte(void);       // 接收一个字节（阻塞）
 uint8_t USART1_IsDataAvailable(void);   // 检查是否有数据可读
+void USART3_Init(uint32_t baudrate);    // 初始化USART3
 
 #endif

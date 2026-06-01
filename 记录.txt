@@ -14,3 +14,9 @@ adc库，TIM2->TIM4定时中断
 数据接收由usart1中断接收
 手柄：
 dma,adc库。void ADC_data(void)数据采集，放在adc.c
+
+5/29
+手柄：蓝牙发送相关的函数，main函数逻辑，基本ok；
+6/1
+原项目光照检测via adc中断，现通过tim4中断采集；
+天问模块  usart3＋dma中断，逻辑处理写入dma中断，receive_time++在TIM4定时器处理(only mode2)

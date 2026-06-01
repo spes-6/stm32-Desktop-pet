@@ -126,3 +126,50 @@ int fgetc(FILE *f)
 {
     return (int)USART1_ReceiveByte();
 }
+
+#include "stm32f10x.h"
+//--------------------usart3初始化
+void USART3_Init(uint32_t baudrate)
+{
+    GPIO_InitTypeDef GPIO_InitStructure;
+    USART_InitTypeDef USART_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
+    
+    // 1. 使能时钟
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);   // GPIOB 时钟
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);  // USART3 时钟
+    
+    // 2. 配置引脚
+    // TX: PB10 (复用推挽输出)
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    
+    // RX: PB11 (浮空输入)
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    
+    // 3. 配置 USART3 参数
+    USART_InitStructure.USART_BaudRate = baudrate;          // 波特率（如 9600）
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+    USART_Init(USART3, &USART_InitStructure);
+    
+    // 4. 使能 USART3
+    USART_Cmd(USART3, ENABLE);
+    
+//    // 5. 配置 NVIC 中断（如果需要接收中断）
+//    NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
+//    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+//    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+//    NVIC_Init(&NVIC_InitStructure);
+//    
+//    // 6. 使能接收中断（如果用中断方式）
+//    //USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+}

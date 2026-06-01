@@ -769,6 +769,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\OLED_Data.h</FilePath>
             </File>
+            <File>
+              <FileName>dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>dma.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\dma.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

@@ -20,8 +20,12 @@ int mode=1,control_base=1500,control_head=1900,control_time=0;//模式  1-互动
 static uint16_t stuck_time = 0;//遥感使用时长
 static uint8_t last_left_x = 0, last_left_y = 0;
 static uint8_t last_right_x = 0, last_right_y = 0;
+uint8_t Rx_dat = 0;//串口接收字符
+uint8_t rx = 0;//串口接收字符
+int receive_num=0,receive_sign=0,receive_double=0,receive_time=0,useful_num=0;//接收的数据   数据间隔
+int state=0,chance=1;//动作,标志位
 
- //uint16_t light_show=50;  // 光照值（0-100）
+ uint16_t light_show=50;  // 光照值（0-100）
  
 //----------------------------------end-------------------------------------------------------------------------
 //--------------------------遥感参数初始
@@ -257,7 +261,10 @@ void TIM4_IRQHandler(void)
 		
 		Key_Tick();
 		ADC1_Tick();
-		
+		if(mode == 2) {
+            receive_time++;
+            if(receive_time > 100) receive_time = 100;//判断两次数字输入的时间间隔
+        }
 		if(mode == 3) {
             abnormal_deal();
         }

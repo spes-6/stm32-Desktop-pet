@@ -1,0 +1,11 @@
+#ifndef __DMA_H
+#define __DMA_H
+
+#include "stm32f10x.h"
+
+
+// º¯ÊýÉùÃ÷
+//void My_DMA_Init(void);
+void USART3_DMA_Init(void);
+
+#endif /* __DMA_H */
