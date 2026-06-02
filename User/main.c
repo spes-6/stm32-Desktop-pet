@@ -10,6 +10,8 @@
 #include "my_usart.h"
 #include "adc.h"
 //----------------------------------全局变量定义-------------------------------------------------------------------------
+#define time 1000
+int inter=0,feel_inter=0,inter_time=0;//互动标志 互动是否抬头  互动时间
 int feel_left=0,feel_right=0,anger=0;//灭灯为1,anger为怒气值
 int turn_left_A,turn_right_A;//暂停使用标志位
 int mood=0,clear=0;//表示心情  清屏
@@ -28,7 +30,48 @@ int state=0,chance=1;//动作,标志位
  uint16_t light_show=50;  // 光照值（0-100）
  
 //----------------------------------end-------------------------------------------------------------------------
-//--------------------------遥感参数初始
+void mood_good(){   //情绪改变，心情变好，一点互动即可
+	inter_time=0;
+	if(mood<=8&&mood!=0){
+	  mood--;
+	}
+}
+void mood_bad(){    //情绪差，长时间不互动，放定时器
+	if(mood<=7){
+	  mood++;
+	}
+}
+
+
+//---------------------------------------------------------------------移动停止
+void stop(void)
+{
+    // 停止 PWM
+    TIM_SetCompare3(TIM2, 0);
+    TIM_SetCompare4(TIM2, 0);
+    
+    // 根据方向状态处理引脚
+    if(turn_left_A == 1){
+        GPIO_ResetBits(GPIOA, GPIO_Pin_1);
+    }
+    // turn_left_A == 0 时，引脚已经是低电平，不需要额外处理
+    
+    if(turn_right_A == 1){
+        GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+    }
+}
+
+//-------------------------------------------------------------------------舵机控制
+void body(uint16_t base, uint16_t head)
+{
+	if(base>=2500){base=2500;}
+	else if(base<=500){base=500;}
+	if(head>=2500){head=2500;}
+	else if(head<1200){head=1200;}
+	 TIM_SetCompare1(TIM3, base);//底部   2500-500 
+   TIM_SetCompare2(TIM3, head);//上部   2500-1200 2500-低头 1200-最顶 1500-超级仰头  1900-正常对人  2250--平视
+}
+//-------------------------------------------------------------------遥感参数初始
 void zero_control() {
     // 原有计数器清零
     left_x1 = 0; left_y1 = 0; right_x1 = 0; right_y1 = 0;
@@ -42,7 +85,7 @@ void zero_control() {
     last_right_x = 0; last_right_y = 0;
 }
 
-//---------------------------遥感异常
+//---------------------------------------------------------------------遥感异常
 
 
 void abnormal_deal() {
@@ -69,16 +112,181 @@ void abnormal_deal() {
 			stuck_time = 0;
     }
 }
-//-----------------------------------------------MODE 1---------------------------------------------------------------------------
-void body(uint16_t base, uint16_t head)
+
+//----------------------------------------------------------------------------姿态控制
+void state_show(void)
 {
-	if(base>=2500){base=2500;}
-	else if(base<=500){base=500;}
-	if(head>=2500){head=2500;}
-	else if(head<1200){head=1200;}
-	 TIM_SetCompare1(TIM3, base);//底部   2500-500 
-   TIM_SetCompare2(TIM3, head);//上部   2500-1200 2500-低头 1200-最顶 1500-超级仰头  1900-正常对人  2250--平视
+    if(state == 0 && chance != 0)           // 左右看
+    {
+        mood_good();
+        stop();
+        body(500, 2500);
+        delay_ms(time);
+        body(2500, 2500);
+        delay_ms(time);
+        body(1500, 1900);
+        chance = 0;
+    }
+    else if(state == 1)                     // 前进
+    {
+        if(chance != 1)
+        {
+            chance = 1;
+            mood_good();
+        }
+        go();
+        delay_ms(10);
+    }
+    else if(state == 2)                     // 后退
+    {
+        if(chance != 2)
+        {
+            chance = 2;
+            mood_bad();
+        }
+        inter_time = 0;
+        back();
+    }
+    else if(state == 3 && chance != 3)      // 停止
+    {
+        chance = 3;
+        mood_good();
+        body(1500, 1900);
+        stop();
+    }
+    else if(state == 4 && chance != 4)      // 立正
+    {
+        mood_good();
+        stop();
+        body(1500, 2500);
+        delay_ms(500);
+        go();
+        delay_ms(1000);
+        stop();
+        body(1500, 1900);
+        chance = 4;
+    }
+    else if(state == 5 && chance != 5)      // 找尾巴
+    {
+        mood_good();
+        left_wheel(1, 2500);
+        right_wheel(0, 2500);
+        body(500, 2500);
+        chance = 5;
+    }
+    else if(state == 6)                     // 摇头晃脑
+    {
+        uint16_t chance_base = 1500;
+        uint16_t chance_head = 2500;
+        int i;
+        
+        inter_time = 0;
+        mood = 11;
+        dizzy_time = 0;
+        stop();
+        body(1500, 2500);
+        
+        for(i = 0; i < 50; i++)
+        {
+            chance_base -= 20;
+            chance_head -= 5;
+            body(chance_base, chance_head);
+            delay_ms(10);
+        }
+        for(i = 0; i < 50; i++)
+        {
+            chance_base += 20;
+            chance_head -= 15;
+            body(chance_base, chance_head);
+            delay_ms(10);
+        }
+        for(i = 0; i < 50; i++)
+        {
+            chance_base += 20;
+            chance_head += 15;
+            body(chance_base, chance_head);
+            delay_ms(10);
+        }
+        for(i = 0; i < 50; i++)
+        {
+            chance_base -= 20;
+            chance_head += 4;
+            body(chance_base, chance_head);
+            delay_ms(10);
+        }
+    }
+    else if(state == 7 && chance != 7)      // 不要，摇头
+    {
+        int i;
+        inter_time = 0;
+        stop();
+        body(1500, 2250);
+        for(i = 0; i < 4; i++)
+        {
+            body(1600, 2250);
+            delay_ms(200);
+            body(1400, 2250);
+            delay_ms(200);
+        }
+        body(1500, 2250);
+        chance = 7;
+    }
+    else if(state == 8 && chance != 8)      // 点头
+    {
+        int i;
+        mood_good();
+        stop();
+        body(1500, 2250);
+        for(i = 0; i < 4; i++)
+        {
+            body(1500, 2250);
+            delay_ms(200);
+            body(1500, 1800);
+            delay_ms(200);
+        }
+        body(1500, 1800);
+        chance = 8;
+    }
+    else if(state == 9)                     // 睡觉
+    {
+        inter_time = 0;
+        mood = 9;
+        body(1500, 2500);
+        stop();
+    }
+    else if(state == 10 && chance != 10)    // 晕
+    {
+        uint16_t chance_base = 1500;
+        int i;
+        
+        inter_time = 0;
+        chance = 10;
+        mood = 11;
+        face();
+        stop();
+        body(1500, 1300);
+        
+        for(i = 10; i > 0; i--)
+        {
+            body(chance_base + i * 100, 1300);
+            delay_ms(time / 5);
+            body(chance_base - i * 100, 1300);
+            delay_ms(time / 5);
+        }
+        body(1500, 1900);
+    }
+    else if(state == 11 && chance != 11)    // 唤醒
+    {
+        stop();
+        body(1500, 2250);
+        go();
+        delay_ms(500);
+        body(1500, 1900);
+        chance = 11;
+    }
 }
+//-----------------------------------------------MODE 1---------------------------------------------------------------------------
+
 
 void data_show(void)
 {

@@ -20,3 +20,5 @@ dma,adc库。void ADC_data(void)数据采集，放在adc.c
 6/1
 原项目光照检测via adc中断，现通过tim4中断采集；
 天问模块  usart3＋dma中断，逻辑处理写入dma中断，receive_time++在TIM4定时器处理(only mode2)
+6/2
+姿态控制相关
