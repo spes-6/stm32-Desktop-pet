@@ -76,6 +76,7 @@ uint16_t My_ADC_GetLight(void)
 
 
 static uint8_t adc_sample_cnt = 0;
+
 void ADC1_Tick(void)
 {
 			adc_sample_cnt++;

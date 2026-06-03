@@ -22,3 +22,9 @@ dma,adc库。void ADC_data(void)数据采集，放在adc.c
 天问模块  usart3＋dma中断，逻辑处理写入dma中断，receive_time++在TIM4定时器处理(only mode2)
 6/2
 姿态控制相关
+6/3
+void dizzy_trigger()
+姿态
+TIM4定时器中任务
+
+next：control blue ；feel

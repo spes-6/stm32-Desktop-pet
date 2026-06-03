@@ -26,10 +26,162 @@ uint8_t Rx_dat = 0;//串口接收字符
 uint8_t rx = 0;//串口接收字符
 int receive_num=0,receive_sign=0,receive_double=0,receive_time=0,useful_num=0;//接收的数据   数据间隔
 int state=0,chance=1;//动作,标志位
-
+int anger_left=0,anger_right=0,dizzy=0,dizzy_time=0;//互动晕眩 
  uint16_t light_show=50;  // 光照值（0-100）
+ int clock_start=0,clock_min=0,clock_second=0,clock_hour=0;//定时
+int environment_time=0;//环境观看时间
+int lock=0;//解锁
+
  
 //----------------------------------end-------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------环境数据显示
+void data_show(void)
+{
+    uint8_t temperature = 0;
+    uint8_t humidity = 0;
+    char display_str[20];  // 临时字符串缓冲区
+    
+    // 1. 读取DHT11数据
+    if(DHT11_Read_Data(&temperature, &humidity) == 0)  // 返回0表示成功
+    {
+        // 2. 显示温度（使用英文字符串代替中文）
+        OLED_ShowString(0, 0, "Temp:", OLED_8X16);
+        OLED_ShowNum(60, 0, temperature - 4, 2, OLED_8X16);
+        OLED_ShowString(85, 0, "C", OLED_8X16);
+        
+        // 3. 显示湿度
+        OLED_ShowString(0, 22, "Humi:", OLED_8X16);
+        OLED_ShowNum(60, 22, humidity, 2, OLED_8X16);
+        OLED_ShowString(85, 22, "%", OLED_8X16);
+        
+//        // 4. 显示光照
+//        OLED_ShowString(0, 45, "Light:", OLED_8X16);
+//        OLED_ShowNum(60, 45, 100 - light_show, 2, OLED_8X16);
+//        OLED_ShowString(85, 45, "%", OLED_8X16);
+    }
+    else
+    {
+        // 读取失败时显示错误
+        OLED_ShowString(0, 45, "DHT11 Error!", OLED_8X16);
+    }
+    OLED_Update();  // 最后更新显示
+}
+
+
+
+// 修改后的 data_show() 函数
+void face(){       //表情控制       1模式
+	  if(mood==0){   //超级喜爱
+			if(clear!=0){
+		OLED_Clear();	
+		}
+		clear=0;
+		OLED_ShowImage(0,0,128,64,BMP2);
+		}
+    else if(mood==1){   //喜爱
+			if(clear!=1){
+		OLED_Clear();	
+		}
+		OLED_ShowImage(0,0,128,64,BMP5);
+		clear=1;
+		}
+		else if(mood==2){   //一点喜爱
+			if(clear!=2){
+		OLED_Clear();	
+		}
+		OLED_ShowImage(0,0,128,64,BMP4);
+		clear=2;
+		}
+	  if(mood==3){   //初始待机表情
+		  if(clear!=3){
+		OLED_Clear();	
+		}
+		OLED_ShowImage(0,0,128,64,BMP0);
+		clear=3;
+		}
+		else if(mood==4){   //一级烦躁
+			if(clear!=4){
+		OLED_Clear();	
+		}
+		clear=4;
+		OLED_ShowImage(0,0,128,64,BMP8);
+		}
+		else if(mood==5){   //二级烦躁
+			if(clear!=5){
+		OLED_Clear();	
+		}
+		clear=5;
+		OLED_ShowImage(0,0,128,64,BMP9);
+		}
+		else if(mood==6){   //三级烦躁
+			if(clear!=6){
+		OLED_Clear();	
+		}
+		clear=6;
+		OLED_ShowImage(0,0,128,64,BMP10);
+		}
+		else if(mood==7){   //四级烦躁
+			if(clear!=7){
+		OLED_Clear();	
+		}
+		clear=7;
+		OLED_ShowImage(0,0,128,64,BMP11);
+		}
+		else if(mood==8){   //恼羞成怒
+			if(clear!=8){
+		OLED_Clear();	
+		}
+		clear=8;
+		OLED_ShowImage(0,0,128,64,BMP7);
+		}
+		else if(mood==9){   //睡觉
+			if(clear!=9){
+		OLED_Clear();	
+		}
+		clear=9;
+		OLED_ShowImage(0,0,128,64,BMP12);
+		}
+		else if(mood==10){   //OVER
+			if(clear!=10){
+		OLED_Clear();	
+		}
+		clear=10;
+		OLED_ShowImage(0,0,128,64,BMP3);
+		}
+		else if(mood==11){   //晕
+			if(clear!=11){
+		OLED_Clear();	
+		}
+		clear=11;
+		OLED_ShowImage(0,0,128,64,BMP1);}
+//		if(dizzy_time>=30){
+//		  mood=2;
+//			dizzy_time=0;
+//		}
+//		}
+		else if(mood==12){   //环境检测
+		  if(clear!=12){
+			OLED_Clear();	
+			}
+			clear=12;
+			data_show();
+		}
+		//OLED_Refresh();
+	OLED_Update();
+
+}
+
+//-------------------------------------------------------------------猜数字取位数
+void useful_data(){
+	if(receive_sign==0){
+	useful_num=receive_double;
+	}
+	else if(receive_double==0){
+	useful_num=receive_sign;
+	}
+}
+
 void mood_good(){   //情绪改变，心情变好，一点互动即可
 	inter_time=0;
 	if(mood<=8&&mood!=0){
@@ -60,6 +212,37 @@ void stop(void)
         GPIO_ResetBits(GPIOA, GPIO_Pin_4);
     }
 }
+void left_wheel(uint8_t dir, uint16_t speed)
+{
+    turn_left_A = dir;
+    if(dir == 0) GPIO_ResetBits(GPIOA, GPIO_Pin_1);
+    else GPIO_SetBits(GPIOA, GPIO_Pin_1);
+    TIM_SetCompare3(TIM2, speed);
+}
+
+// 右轮控制
+void right_wheel(uint8_t dir, uint16_t speed)
+{
+    turn_right_A = dir;
+    if(dir == 0) GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+    else GPIO_SetBits(GPIOA, GPIO_Pin_4);
+    TIM_SetCompare4(TIM2, speed);
+}
+
+// 前进
+void go(void)
+{
+    left_wheel(0, 2500);
+    right_wheel(0, 2500);
+}
+
+// 后退
+void back(void)
+{
+    left_wheel(1, 2500);
+    right_wheel(1, 2500);
+}
+
 
 //-------------------------------------------------------------------------舵机控制
 void body(uint16_t base, uint16_t head)
@@ -285,143 +468,55 @@ void state_show(void)
         chance = 11;
     }
 }
-//-----------------------------------------------MODE 1---------------------------------------------------------------------------
-
-
-void data_show(void)
+//----------------------------------------------------------------眩晕
+void dizzy_trigger(void)   // 触发晕眩
 {
-    uint8_t temperature = 0;
-    uint8_t humidity = 0;
-    char display_str[20];  // 临时字符串缓冲区
+    int diff;
     
-    // 1. 读取DHT11数据
-    if(DHT11_Read_Data(&temperature, &humidity) == 0)  // 返回0表示成功
+    // 只有两边都有触摸记录才检测
+    if(anger_left != 0 && anger_right != 0)
     {
-        // 2. 显示温度（使用英文字符串代替中文）
-        OLED_ShowString(0, 0, "Temp:", OLED_8X16);
-        OLED_ShowNum(60, 0, temperature - 4, 2, OLED_8X16);
-        OLED_ShowString(85, 0, "C", OLED_8X16);
+        // 计算差值绝对值
+        if(anger_left > anger_right) {
+            diff = anger_left - anger_right;
+        } else {
+            diff = anger_right - anger_left;
+        }
         
-        // 3. 显示湿度
-        OLED_ShowString(0, 22, "Humi:", OLED_8X16);
-        OLED_ShowNum(60, 22, humidity, 2, OLED_8X16);
-        OLED_ShowString(85, 22, "%", OLED_8X16);
-        
-//        // 4. 显示光照
-//        OLED_ShowString(0, 45, "Light:", OLED_8X16);
-//        OLED_ShowNum(60, 45, 100 - light_show, 2, OLED_8X16);
-//        OLED_ShowString(85, 45, "%", OLED_8X16);
+        // 差值超过5（一边比另一边多5次以上），触发晕眩计数
+        if(diff > 5) {
+            dizzy++;
+            anger_left = 0;
+            anger_right = 0;
+        }
+        // 差值 <= 5 时，不触发，但也不清零计数器（可选：也可以清零或不清零）
+        else {
+            // 轻微不平衡，可以选择不清零，让用户继续互动
+            // 或者清零，根据您的需求
+            anger_left = 0;
+            anger_right = 0;
+        }
     }
-    else
-    {
-        // 读取失败时显示错误
-        OLED_ShowString(0, 45, "DHT11 Error!", OLED_8X16);
+    
+    // 晕眩计数达到6次，触发晕眩状态
+    if(dizzy >= 6) {
+        mood = 11;      // 晕眩表情
+        face();         // 立即显示
+        dizzy = 0;      // 清零晕眩计数
     }
-    OLED_Update();  // 最后更新显示
 }
 
-void face(){       //表情控制       1模式
-	  if(mood==0){   //超级喜爱
-			if(clear!=0){
-		OLED_Clear();	
-		}
-		clear=0;
-		OLED_ShowImage(0,0,128,64,BMP2);
-		}
-    else if(mood==1){   //喜爱
-			if(clear!=1){
-		OLED_Clear();	
-		}
-		OLED_ShowImage(0,0,128,64,BMP5);
-		clear=1;
-		}
-		else if(mood==2){   //一点喜爱
-			if(clear!=2){
-		OLED_Clear();	
-		}
-		OLED_ShowImage(0,0,128,64,BMP4);
-		clear=2;
-		}
-	  if(mood==3){   //初始待机表情
-		  if(clear!=3){
-		OLED_Clear();	
-		}
-		OLED_ShowImage(0,0,128,64,BMP0);
-		clear=3;
-		}
-		else if(mood==4){   //一级烦躁
-			if(clear!=4){
-		OLED_Clear();	
-		}
-		clear=4;
-		OLED_ShowImage(0,0,128,64,BMP8);
-		}
-		else if(mood==5){   //二级烦躁
-			if(clear!=5){
-		OLED_Clear();	
-		}
-		clear=5;
-		OLED_ShowImage(0,0,128,64,BMP9);
-		}
-		else if(mood==6){   //三级烦躁
-			if(clear!=6){
-		OLED_Clear();	
-		}
-		clear=6;
-		OLED_ShowImage(0,0,128,64,BMP10);
-		}
-		else if(mood==7){   //四级烦躁
-			if(clear!=7){
-		OLED_Clear();	
-		}
-		clear=7;
-		OLED_ShowImage(0,0,128,64,BMP11);
-		}
-		else if(mood==8){   //恼羞成怒
-			if(clear!=8){
-		OLED_Clear();	
-		}
-		clear=8;
-		OLED_ShowImage(0,0,128,64,BMP7);
-		}
-		else if(mood==9){   //睡觉
-			if(clear!=9){
-		OLED_Clear();	
-		}
-		clear=9;
-		OLED_ShowImage(0,0,128,64,BMP12);
-		}
-		else if(mood==10){   //OVER
-			if(clear!=10){
-		OLED_Clear();	
-		}
-		clear=10;
-		OLED_ShowImage(0,0,128,64,BMP3);
-		}
-		else if(mood==11){   //晕
-			if(clear!=11){
-		OLED_Clear();	
-		}
-		clear=11;
-		OLED_ShowImage(0,0,128,64,BMP1);}
-//		if(dizzy_time>=30){
-//		  mood=2;
-//			dizzy_time=0;
-//		}
-//		}
-		else if(mood==12){   //环境检测
-		  if(clear!=12){
-			OLED_Clear();	
-			}
-			clear=12;
-			data_show();
-		}
-		//OLED_Refresh();
-	OLED_Update();
-
+void clock(){             //记录在线时长
+	clock_second++;
+	if(clock_second>=600){
+	  clock_second=0;
+		clock_min++;
+	}
+	if(clock_min==60){
+		clock_min=0;
+		clock_hour++;
+	}
 }
-
-// 修改后的 data_show() 函数
 
 
 
@@ -467,16 +562,67 @@ void TIM4_IRQHandler(void)
 	if (TIM_GetITStatus(TIM4, TIM_IT_Update) == SET)
 	{
 		
+		clock();
 		Key_Tick();
 		ADC1_Tick();
+		//*******************************    数字识别
 		if(mode == 2) {
             receive_time++;
             if(receive_time > 100) receive_time = 100;//判断两次数字输入的时间间隔
         }
 		if(mode == 3) {
+			// 1. 无操作超时（60秒回中）
+    if(left_x == 0 && left_y == 0 && right_x == 0 && right_y == 0) {
+        control_time++;
+        if(control_time >= 600) {
+            mode = 1;
+            control_time = 0;
+        }
+    } else {
+        control_time = 0;
+    }
+		//  卡死检测（60s）
             abnormal_deal();
         }
+		if(mode==1){
+	//*******************************定时器正常记录
+	dizzy_trigger(); //晕眩检测
+	inter_time++;    //交互检测
+	//******************************
+	if(inter>110){  //限幅
+	inter=100;
+	}
+	if(inter>=10&&inter<100){  //检测是否抬头  阻止晕眩
+	  body(1500,1900);
+		dizzy=0;        
+	}
+	//***********************检测是否有交互
+	if(inter_time>=3000){     //5分钟不互动，情绪降低一级
+	  mood_bad();
+		inter_time=0;
+	}
+	//*****************************晕眩时间检测，3秒后解控   环境显示检测,5秒后退出检测
+		if(mood == 11) {      // 晕眩状态
+            dizzy_time++;
+        }
+		else if(mood == 12) {           // 环境检测模式
+    environment_time++;         // 每 0.1 秒加 1
+    if(environment_time >= 50) { // 50 × 0.1秒 = 5秒
+        mood = 3;                // 退出环境检测，回到待机表情
+        environment_time = 0;    // 清零计时器
+    }
+}
+		//***********
+		if(left_x == 2 && right_x == 1) {   // 左摇杆向左推，右摇杆向右推
+    lock = 1;                         // 解锁标志位置1
+}
+if(lock == 1) {
+    if(left_x == 1 && right_x == 2) { // 左摇杆向右推，右摇杆向左推
+        mode = 3;                      // 切换到手柄控制模式
+        lock = 0;                      // 清零解锁标志
+    }
+}
 		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 	}
 }
-
+}
